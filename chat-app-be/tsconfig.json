@@ -9,14 +9,12 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "lib": [
-      "ES2020",
-      "DOM"
+      "ES2020"
     ],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
+    "types": [
+      "node"
     ]
   },
   "include": [
