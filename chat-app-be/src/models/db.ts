@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import { Pool } from "pg";
 
 const pool = new Pool({
@@ -14,7 +13,6 @@ const pool = new Pool({
     }
 });
 
-// Kết nối thử để log kết quả
 pool.query("SELECT NOW()", (err, res) => {
     if (err) {
         console.error("❌ Database connection failed:", err.stack);

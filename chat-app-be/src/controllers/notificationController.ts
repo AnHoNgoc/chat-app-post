@@ -7,6 +7,7 @@ import { GoogleAuth } from "google-auth-library";
 import path from "path";
 
 export const saveFcmToken = async (req: Request, res: Response): Promise<any> => {
+
     const { fcmToken } = req.body;
     const userId = req.user?.id;
 
@@ -94,7 +95,7 @@ export const sendPushNotification = async (
                     body,
                     type: "chat",
                     conversationId,
-                    mate, 
+                    mate,
                     profileImage
                 },
             },

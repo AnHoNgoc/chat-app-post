@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:chat_app/core/socket_service.dart';
 import 'package:chat_app/features/chat/presentation/bloc/chat_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'api/firebase_api.dart';
 import 'api/notification_service.dart';
 import 'deeplink_handle.dart';
 import 'di_container.dart';
@@ -36,8 +38,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await NotificationService.initialize();
 
+  await NotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await SystemChrome.setPreferredOrientations([
@@ -56,11 +58,13 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
-
+  Future.microtask(() => FirebaseApi().initNotifications());
+  // Khởi tạo deep link sau app dựng xong
   Future.delayed(const Duration(milliseconds: 300), () {
     DeepLinkHandler().init();
   });
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -71,21 +75,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  RemoteMessage? _initialMessage;
-
   @override
   void initState() {
     super.initState();
-    // Gọi sau khi widget tree đã dựng xong
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-
-      if (_initialMessage != null && _initialMessage!.data.isNotEmpty) {
-        print('📲 App opened from terminated via notification');
-        await NotificationService.handleNotificationClick(_initialMessage!.data);
-        _initialMessage = null;
-      }
-    });
   }
 
 

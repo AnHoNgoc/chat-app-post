@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'notification_service.dart';
 
 class FirebaseApi {
+
   final _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotifications() async {
@@ -33,11 +34,11 @@ class FirebaseApi {
     });
 
     // // App vừa mở lên từ trạng thái tắt hoàn toàn (terminated)
-    // RemoteMessage? initialMessage = await _firebaseMessaging.getInitialMessage();
-    // if (initialMessage != null && initialMessage.data.isNotEmpty) {
-    //   print('📲 App opened via notification from terminated state');
-    //   NotificationService.handleNotificationClick(initialMessage.data);
-    // }
+    RemoteMessage? initialMessage = await _firebaseMessaging.getInitialMessage();
+    if (initialMessage != null && initialMessage.data.isNotEmpty) {
+      print('📲 App opened via notification from terminated state');
+      NotificationService.handleNotificationClick(initialMessage.data);
+    }
   }
 
 }
