@@ -115,8 +115,15 @@ export const sendPushNotification = async (
         );
 
         console.log("✅ Push notification sent:", response.data);
-    } catch (error) {
-        console.error("❌ Failed to send push notification:", error);
+    } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+            console.error("❌ Failed to send push notification:");
+            console.error("   Status:", error.response?.status);
+            console.error("   Data:", error.response?.data);
+            console.error("   Headers:", error.response?.headers);
+        } else {
+            console.error("❌ Unknown error:", error);
+        }
     }
 };
 
