@@ -46,6 +46,23 @@ const PROJECT_ID = "chat-app-nodejs-f77bf";
 
 const SERVICE_ACCOUNT_PATH = path.resolve(__dirname, "../config/service-account.json");
 
+function getGoogleAuth() {
+    if (process.env.NODE_ENV === "production") {
+        // 🚀 Deploy: dùng biến môi trường (copy JSON service account vào env)
+        return new GoogleAuth({
+            credentials: JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!),
+            scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
+        });
+    } else {
+        // 🖥️ Local: dùng file JSON
+        return new GoogleAuth({
+            keyFile: SERVICE_ACCOUNT_PATH,
+            scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
+        });
+    }
+}
+
+
 export const sendPushNotification = async (
     fcmToken: string,
     title: string,
@@ -55,10 +72,7 @@ export const sendPushNotification = async (
     profileImage: string
 ) => {
     try {
-        const auth = new GoogleAuth({
-            keyFile: SERVICE_ACCOUNT_PATH,
-            scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
-        });
+        const auth = getGoogleAuth();
 
         const client = await auth.getClient();
         const accessToken = await client.getAccessToken();
@@ -116,14 +130,7 @@ export const sendPushNotification = async (
 
         console.log("✅ Push notification sent:", response.data);
     } catch (error: any) {
-        if (axios.isAxiosError(error)) {
-            console.error("❌ Failed to send push notification:");
-            console.error("   Status:", error.response?.status);
-            console.error("   Data:", error.response?.data);
-            console.error("   Headers:", error.response?.headers);
-        } else {
-            console.error("❌ Unknown error:", error);
-        }
+        console.error("❌ Unknown error:", error);
     }
 };
 
